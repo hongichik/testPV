@@ -32,7 +32,7 @@ const App = () => {
   };
   useLayoutEffect(() => {
     checkPermission();
-  }, [])
+  }, )
   const getUsers = async () => {
     const data = await userAPI.getUsers(filter);
     if (data) {
