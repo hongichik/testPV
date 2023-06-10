@@ -47,9 +47,9 @@ services:
     volumes:
       - ../backend:/var/www/html/BE
       - ../frontend:/var/www/html/FE
-    ports:
-      - "3000:3000"
-      - "3001:3001"
+    # ports:
+    #   - "3000:3000"
+    #   - "3001:3001"
     # command: sh -c "cd /var/www/html/FE && npm run dev & cd /var/www/html/NODE && npm start"
     working_dir: /var/www/html
     links:
