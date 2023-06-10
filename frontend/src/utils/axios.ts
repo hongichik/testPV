@@ -7,7 +7,7 @@ class AxiosClass {
 
     constructor() {
         this.$axios = Axios.create({
-            baseURL: "http://be_domain.com/api/",
+            baseURL: "http://103.179.188.83:3003/api/",
             timeout: 300000,
             headers: {
                 Accept: 'multipart/form-data',
