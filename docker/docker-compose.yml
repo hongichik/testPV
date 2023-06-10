@@ -64,6 +64,8 @@ services:
     ports:
       - "80:80"
       - "443:443"
+      - "3001:3001"
+      - "3003:3003"
     environment:
       - CERT_PASS=test
     volumes:
