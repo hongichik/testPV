@@ -1,0 +1,91 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql:5.7.41
+    container_name: BE_mysql_${APP_NAME}
+    volumes:
+      - ../docker/mysql/db:/var/lib/mysql
+    environment:
+      - "MYSQL_ROOT_PASSWORD=root_password"
+      - MYSQL_DATABASE=${MYSQL_DATABASE}
+      - MYSQL_USER=${MYSQL_USER}
+      - MYSQL_PASSWORD=${MYSQL_PASSWORD}
+    ports:
+      - "3306:3306"
+    networks:
+      - app-network
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin
+    container_name: BE_phpmyadmin_${APP_NAME}
+    environment:
+      - "PMA_HOST=mysql"
+      - "MYSQL_ROOT_PASSWORD=root_password"
+    ports:
+      - "8081:80"
+    depends_on:
+      - mysql
+    networks:
+      - app-network
+  php_test_pv:
+    build:
+      context: ../docker/php
+    container_name: backend_${APP_NAME}
+    # ports:
+    #   - "9000:9000"
+    volumes:
+      - ../backend:/var/www/html/BE
+      - ../docker/php/php.ini:/etc/php8/php.ini
+      - ../docker/php/www.conf:/etc/php8/php-fpm.d/www.conf
+    working_dir: /var/www/html/BE
+    networks:
+      - app-network
+  npm:
+    image: node:16.14-alpine3.15
+    container_name: npm_frontend
+    command: tail -f /dev/null
+    volumes:
+      - ../backend:/var/www/html/BE
+      - ../frontend:/var/www/html/FE
+    ports:
+      - "3000:3000"
+      - "3001:3001"
+    # command: sh -c "cd /var/www/html/FE && npm run dev & cd /var/www/html/NODE && npm start"
+    working_dir: /var/www/html
+    links:
+      - php_test_pv
+    depends_on:
+      - php_test_pv
+    networks:
+      - app-network
+  nginx:
+    image: nginx:stable-alpine
+    container_name: nginx_${APP_NAME}
+    ports:
+      - "80:80"
+      - "443:443"
+    environment:
+      - CERT_PASS=test
+    volumes:
+      - ../backend:/var/www/html/BE
+      - ../frontend:/var/www/html/FE
+      - ../docker/BE_nginx/cert.pem:/var/BE/nginx/certs/cert.pem
+      - ../docker/BE_nginx/key.pem:/var/BE/nginx/certs/key.pem
+      - ../docker/BE_nginx/env.conf:/var/BE/nginx/env.conf
+      - ../docker/FE_nginx/cert.pem:/var/FE/nginx/certs/cert.pem
+      - ../docker/FE_nginx/key.pem:/var/FE/nginx/certs/key.pem
+      - ../docker/FE_nginx/env.conf:/var/FE/nginx/env.conf
+      - ../docker/nginx/nginx.conf:/etc/nginx/conf.d/default.conf
+      - ../docker/nginx/log:/var/log/nginx
+    depends_on:
+      - php_test_pv
+      - npm
+    networks:
+      - app-network
+
+volumes:
+  db_data:
+
+networks:
+  app-network:
+    driver: bridge

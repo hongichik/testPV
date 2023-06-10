@@ -1,0 +1,35 @@
+.w-500px {
+    max-width: 90%;
+    width: 500px;
+}
+
+.mh-100 {
+    min-height: 85vh;
+}
+
+.fs-25 {
+    font-size: 25px;
+}
+
+.btn-a {
+    a {
+        text-decoration: none;
+        color: black;
+        padding: 10px 30px;
+        margin: 0px 10px;
+        background: rgb(225, 225, 225);
+        border-radius: 20px;
+        &:hover {
+            color: rgb(0, 101, 152);
+            background-color: rgb(255, 255, 255);
+        }
+    }
+    .active {
+        color: rgb(0, 101, 152);
+        background-color: rgb(255, 255, 255);
+    }
+}
+
+.pointer{
+    cursor: pointer;
+}
